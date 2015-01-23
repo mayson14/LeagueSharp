@@ -252,18 +252,22 @@ namespace Support
                         if (IsBotSafe() && Carry.IsDead || Carry.InFountain())
                         {
                             Helpers.PrintMessage("Carry is Dead");
-                        
-                                    if (!Bot.InFountain())
+                            if (Bot.Level > 10)
+                            { Carry = null; }
+                            else
+                            {
+                                if (!Bot.InFountain())
+                                {
+                                    NearestAllyTurret = MetaHandler.AllyTurrets.FirstOrDefault();
+                                    if (NearestAllyTurret != null)
                                     {
-                                        NearestAllyTurret = MetaHandler.AllyTurrets.FirstOrDefault();
-                                        if (NearestAllyTurret != null)
-                                        {
-                                            _saferecall.X = NearestAllyTurret.Position.X + _safe;
-                                            _saferecall.Y = NearestAllyTurret.Position.Y;
-                                            Bot.IssueOrder(GameObjectOrder.MoveTo, _saferecall.To3D());                                           
-                                        }
+                                        _saferecall.X = NearestAllyTurret.Position.X + _safe;
+                                        _saferecall.Y = NearestAllyTurret.Position.Y;
+                                        Bot.IssueOrder(GameObjectOrder.MoveTo, _saferecall.To3D());
                                     }
                                 }
+                            }
+                        }
                     }
                     #endregion Carry is dead
                     #region Following
