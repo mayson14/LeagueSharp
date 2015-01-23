@@ -202,6 +202,7 @@ namespace Support
                     #region Carry is null
                     if (Carry == null && timeElapsed > 15000 && timeElapsed < 135000 && !_byPassLoadedCheck)
                     {
+                        Helpers.PrintMessage("Carry is Null");
                         if (Bot.InFountain() || Bot.Distance(BotLanePos) > 400)
                         {
                             Bot.IssueOrder(GameObjectOrder.MoveTo, BotLanePos.To3D());
@@ -250,36 +251,8 @@ namespace Support
                     {
                         if (IsBotSafe() && Carry.IsDead || Carry.InFountain())
                         {
-                            if (_tempcarry == null || _tempcarry.IsDead || _tempcarry.InFountain())
-                            {
-                                if (
-                                    MetaHandler.AllyHeroes.FirstOrDefault(
-                                        hero =>
-                                            !hero.IsMe && !hero.InFountain() && !hero.IsDead &&
-                                            !MetaHandler.HasSmite(hero)) != null)
-                                {
-                                    _tempcarry =
-                                        MetaHandler.AllyHeroes.FirstOrDefault(
-                                            hero =>
-                                                !hero.IsMe && !hero.InFountain() && !hero.IsDead &&
-                                                !MetaHandler.HasSmite(hero));
-                                }
-                                if (
-                                    MetaHandler.AllyHeroes.FirstOrDefault(
-                                        hero =>
-                                            !hero.IsMe && !hero.InFountain() && !hero.IsDead &&
-                                            !MetaHandler.HasSmite(hero)) == null &&
-                                    MetaHandler.AllyHeroes.FirstOrDefault(
-                                        hero => !hero.IsMe && !hero.InFountain() && !hero.IsDead) != null)
-                                {
-                                    //well fuck, let's follow the jungler -sighs-
-                                    _tempcarry =
-                                        MetaHandler.AllyHeroes.FirstOrDefault(
-                                            hero => !hero.IsMe && !hero.InFountain() && !hero.IsDead);
-                                }
-                                if (!MetaHandler.AllyHeroes.Any(hero => !hero.IsMe && !hero.IsDead))
-                                    //everyone is dead
-                                {
+                            Helpers.PrintMessage("Carry is Dead");
+                        
                                     if (!Bot.InFountain())
                                     {
                                         NearestAllyTurret = MetaHandler.AllyTurrets.FirstOrDefault();
@@ -287,36 +260,10 @@ namespace Support
                                         {
                                             _saferecall.X = NearestAllyTurret.Position.X + _safe;
                                             _saferecall.Y = NearestAllyTurret.Position.Y;
-                                            _tookRecallDecision = true;
-                                            if (Bot.Position.Distance(_saferecall.To3D()) < 200)
-                                            {
-                                                Bot.Spellbook.CastSpell(SpellSlot.Recall);
-                                            }
-                                            else
-                                            {
-
-                                                Bot.IssueOrder(GameObjectOrder.MoveTo, _saferecall.To3D());
-                                            }
+                                            Bot.IssueOrder(GameObjectOrder.MoveTo, _saferecall.To3D());                                           
                                         }
                                     }
                                 }
-                            }
-                            if (_tempcarry != null)
-                            {
-
-                                Console.WriteLine("Carry dead or afk, following: " + _tempcarry.ChampionName);
-                                _frontline.X = _tempcarry.Position.X + _chosen;
-                                _frontline.Y = _tempcarry.Position.Y + _chosen;
-                                if (!(_tempcarry.UnderTurret(true) && MetaHandler.NearbyAllyMinions(_tempcarry, 400) < 2) && IsBotSafe())
-                                {
-                                    if (_tempcarry.Distance(Bot) > 550 && !_tookRecallDecision)
-                                    {
-                                        Bot.IssueOrder(GameObjectOrder.MoveTo, _frontline.To3D());
-                                        WalkAround(_tempcarry);
-                                    }
-                                }
-                            }
-                        }
                     }
                     #endregion Carry is dead
                     #region Following
@@ -337,8 +284,10 @@ namespace Support
                     if (timeElapsed > 135000 &&
                         Carry == null && IsBotSafe())
                     {
+                        
                         if (_tempcarry == null || _tempcarry.IsDead || _tempcarry.InFountain())
                         {
+                            Helpers.PrintMessage("Carry Not Found");
                             if (
                                 MetaHandler.AllyHeroes.FirstOrDefault(
                                     hero => !hero.IsMe && !hero.InFountain() && !hero.IsDead && !MetaHandler.HasSmite(hero)) != null)
@@ -402,8 +351,9 @@ namespace Support
                     #endregion
                     #region Carry Switching
 
-                    if ((Bot.Level > 8 || Environment.TickCount - _loaded > 900000) && Environment.TickCount - _lastSwitched > 180000)
+                    if ((Bot.Level > 10) && Environment.TickCount - _lastSwitched > 180000)
                     {
+                        Helpers.PrintMessage("Carry Switching");
                         var alliesSortedByKDA =
                             MetaHandler.AllyHeroes.OrderByDescending(hero => (hero.ChampionsKilled / ((hero.Deaths != 0) ? hero.Deaths : 1))); //AsunaChan2Kawaii
                         if (alliesSortedByKDA.FirstOrDefault() != null)
@@ -412,7 +362,7 @@ namespace Support
                             _lastSwitched = Environment.TickCount;
                         }
                     }
-                    #endregion
+                    #endregion 
                 }
                 catch (Exception e)
                 {
@@ -450,7 +400,7 @@ namespace Support
 
         private static void WalkAround(Obj_AI_Hero follow)
         {
-            _randRange = Rand.Next(-367, 376);
+            _randRange = Rand.Next(-1367, 1376);
             _randSeconds = Rand.Next(500, 3500);
             if (Environment.TickCount - _stepTime >= _randSeconds && !_overrideAttackUnitAction)
             {
