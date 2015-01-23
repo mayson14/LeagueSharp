@@ -64,6 +64,7 @@ namespace Support
             InitPrivateEvents();
 
             Helpers.PrintMessage(string.Format("{0} by {1} v.{2} loaded!", ChampionName, Author, Version));
+            Helpers.PrintMessage("Hello World!");
         }
 
         #region Private Stuff
